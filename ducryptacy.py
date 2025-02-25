@@ -26,7 +26,7 @@ def delete_files(repository_dir):
         print("Deletion cancelled.")
 
 def main():
-    parser = argparse.ArgumentParser(description="Automate Duplicacy backup and restoration tasks.")
+    parser = argparse.ArgumentParser(description="Use duplicacy to encrypt and decrypt sensitive files while keeping a running backup.")
     
     parser.add_argument("--repository_dir", required=True, type=str, help="Directory to be encrypted.")
     parser.add_argument("--storage_url", type=str, default="./duplicacy/", 
@@ -39,6 +39,9 @@ def main():
     args = parser.parse_args()
     repository_dir = Path(args.repository_dir).resolve()
     storage_url = Path(args.storage_url).resolve()
+
+    init_command = f"duplicacy init -e {args.storage_id} {storage_url}"
+    encrypt_command = f"duplicacy backup -threads {args.threads}"
 
     os.chdir(repository_dir)
 
@@ -58,31 +61,25 @@ def main():
         
         match choice:
             case '1':  # Init
-                init_command = f"duplicacy init -e {args.storage_id} {storage_url}"
                 run_command(init_command, "Storage initialized successfully.", "Failed to initialize storage.")
             
             case '2':  # Encrypt and Delete
-                encrypt_command = f"duplicacy backup -threads {args.threads}"
                 run_command(encrypt_command, "Backup successful.", "Failed to create backup.")
                 delete_files(repository_dir)
             
             case '3':  # Decrypt
-                init_command = f"duplicacy init -e {args.storage_id} {storage_url}"
                 run_command(init_command, "Repository initialized successfully.", "Failed to initialize repository.")
                 run_command("duplicacy list", "Revisions listed successfully.", "Failed to list revisions.")
                 revision = input("Enter the revision number to restore: ")
-                restore_command = f"duplicacy restore -r {revision} -overwrite"
-                run_command(restore_command, "Successfully restored", "Failed to restore.")
+                run_command(f"duplicacy restore -r {revision} -overwrite", "Successfully restored", "Failed to restore.")
             
             case '4':  # Encrypt
-                encrypt_command = f"duplicacy backup -threads {args.threads}"
                 run_command(encrypt_command, "Encryption successful.", "Failed to encrypt.")
             
             case '5':  # Restore
                 run_command("duplicacy list", "Revisions listed successfully.", "Failed to list revisions.")
                 revision = input("Enter the revision number to restore: ")
-                restore_command = f"duplicacy restore -r {revision} -overwrite"
-                run_command(restore_command, "Successfully restored", "Failed to restore.")
+                run_command(f"duplicacy restore -r {revision} -overwrite", "Successfully restored", "Failed to restore.")
             
             case '6':  # Delete
                 delete_files(repository_dir)
