@@ -5,7 +5,6 @@ import argparse
 from pathlib import Path
 
 def run_command(command, success_msg, error_msg):
-    """Run a shell command and handle success/error messages."""
     try:
         result = subprocess.run(command, shell=True, check=True, text=True)
         print(success_msg)
@@ -15,7 +14,6 @@ def run_command(command, success_msg, error_msg):
         return e.returncode
 
 def delete_files(repository_dir):
-    """Delete all files in the repository directory after confirmation."""
     confirmation = input(f"Are you sure you want to delete all files in {repository_dir}? (yes/no): ")
     if confirmation.lower() == 'yes':
         try:
