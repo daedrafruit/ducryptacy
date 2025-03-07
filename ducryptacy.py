@@ -74,10 +74,20 @@ def main():
             
             case '3':  # Decrypt
                 run_command(init_command, "Repository initialized successfully.", "Failed to initialize repository.")
-                run_command("duplicacy list", "Revisions listed successfully.", "Failed to list revisions.")
+
+                list = run_command(
+                    "duplicacy list",
+                    "Revisions listed successfully.",
+                    "Failed to list revisions."
+                )
                 
-                revision = input("Enter the revision number to restore: ")
-                run_command(f"duplicacy restore -r {revision} -overwrite", "Successfully restored", "Failed to restore.")
+                if list == 0:
+                    revision = input("Enter the revision number to restore: ")
+                    run_command(
+                        f"duplicacy restore -r {revision} -overwrite",
+                        "Successfully restored",
+                        "Failed to restore."
+                    )
                 
                 # If a program url was passed in, run the program
                 if program_url:
@@ -101,9 +111,19 @@ def main():
                 run_command(encrypt_command, "Encryption successful.", "Failed to encrypt.")
             
             case '5':  # Restore
-                run_command("duplicacy list", "Revisions listed successfully.", "Failed to list revisions.")
-                revision = input("Enter the revision number to restore: ")
-                run_command(f"duplicacy restore -r {revision} -overwrite", "Successfully restored", "Failed to restore.")
+                list = run_command(
+                    "duplicacy list",
+                    "Revisions listed successfully.",
+                    "Failed to list revisions."
+                )
+                
+                if list == 0:
+                    revision = input("Enter the revision number to restore: ")
+                    run_command(
+                        f"duplicacy restore -r {revision} -overwrite",
+                        "Successfully restored",
+                        "Failed to restore."
+                    )
             
             case '6':  # Delete
                 delete_files(repository_dir)
